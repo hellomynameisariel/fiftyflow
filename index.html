@@ -13,7 +13,8 @@
   .slider-bar span { margin: 0 5px; font-size: 1.2em; }
   .slider-label { margin-top: 10px; font-size: 1em; color: #ccc; }
   input[type=range] { width: 160px; background: transparent; }
-  #popOutButton { background: none; border: none; color: inherit; font-size: 1.5em; cursor: pointer; margin-top: 5px; }
+  #popOutButton { background: none; border: none; color: inherit; font-size: 1.2em; cursor: pointer; margin-top: 5px; display: flex; flex-direction: column; align-items: center; }
+  #popOutButton span { font-size: 0.7em; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -27,7 +28,7 @@
     <input type="range" id="sizeSlider" min="4" max="30" value="12">
     <span>+</span>
   </div>
-  <button id="popOutButton" title="Open in new window">↗</button>
+  <button id="popOutButton" title="Open in new window">↗<span>pop-out</span></button>
 </div>
 
 <script>
@@ -68,14 +69,14 @@ function updateTimer() {
     String(secondsRemaining).padStart(2, '0');
 
   if (countingBreak) {
-    if (minutesRemaining === 1 && secondsRemaining === 0) {
-      document.body.style.backgroundColor = '#CC3333'; // Red alert near end of break
+    if (minutesRemaining === 0 || (minutesRemaining === 1 && secondsRemaining > 0)) {
+      document.body.style.backgroundColor = '#CC3333'; // Red alert during last minute of break
     } else {
       document.body.style.backgroundColor = '#007BFF'; // Breaktime blue
     }
     document.body.style.color = '#ffffff';
     banner.style.display = 'block';
-    sliderBar.style.backgroundColor = 'rgba(0, 79, 179, 0.75)';
+    sliderBar.style.backgroundColor = 'rgba(0, 79, 179, 0.5)';
   } else {
     banner.style.display = 'none';
 
@@ -89,7 +90,7 @@ function updateTimer() {
     const value = Math.floor(brightness * 255);
     document.body.style.backgroundColor = `rgb(${value}, ${value}, ${value})`;
     document.body.style.color = (brightness >= 0.5) ? '#000000' : '#ffffff';
-    sliderBar.style.backgroundColor = `rgb(${Math.max(0, value - 40)}, ${Math.max(0, value - 40)}, ${Math.max(0, value - 40)})`;
+    sliderBar.style.backgroundColor = `rgb(${Math.max(0, value - 20)}, ${Math.max(0, value - 20)}, ${Math.max(0, value - 20)})`;
   }
 
   setTimeout(updateTimer, 1000 - new Date().getMilliseconds());
