@@ -37,19 +37,18 @@ const sizeSlider = document.getElementById('sizeSlider');
 const banner = document.getElementById('banner');
 const sliderBar = document.getElementById('sliderBar');
 const popOutButton = document.getElementById('popOutButton');
-let isPoppedOut = false;
+let popupWindow = null;
 
 sizeSlider.addEventListener('input', () => {
   document.documentElement.style.setProperty('--timer-font-size', sizeSlider.value + 'vw');
 });
 
 popOutButton.addEventListener('click', () => {
-  if (!isPoppedOut) {
-    const popUp = window.open(window.location.href, '_blank', 'width=400,height=400,menubar=no,toolbar=no,location=no,status=no');
-    isPoppedOut = true;
-    popOutButton.innerHTML = "↙<span>pop-in</span>";
+  if (!popupWindow || popupWindow.closed) {
+    popupWindow = window.open(window.location.href, '_blank', 'width=400,height=400,menubar=no,toolbar=no,location=no,status=no');
   } else {
-    window.close();
+    popupWindow.close();
+    popupWindow = null;
   }
 });
 
