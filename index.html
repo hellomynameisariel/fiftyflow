@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FiftyFlow Timer</title>
+<style>
+  body { background-color: #000; color: #ccc; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100vh; margin: 0; font-family: Arial, sans-serif; padding-top: 10px; transition: background-color 1s; }
+  #banner { font-size: 2em; margin-bottom: 10px; display: none; }
+  #timer { font-size: var(--timer-font-size, 12vw); text-align: center; margin-top: 20px; }
+  #controls { margin-top: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .slider-bar { display: flex; align-items: center; background-color: #333; padding: 5px 10px; border-radius: 8px; }
+  .slider-bar span { margin: 0 5px; font-size: 1.2em; }
+  .slider-label { margin-top: 10px; font-size: 1em; color: #ccc; }
+  input[type=range] { width: 200px; background: transparent; }
+</style>
+</head>
+<body>
+
+<div id="banner">Break Time Remaining</div>
+<div id="timer">00:00</div>
+<div class="slider-label">Resize</div>
+<div id="controls">
+  <div class="slider-bar">
+    <span>-</span>
+    <input type="range" id="sizeSlider" min="4" max="30" value="12">
+    <span>+</span>
+  </div>
+</div>
+
+<script>
+const timerDisplay = document.getElementById('timer');
+const sizeSlider = document.getElementById('sizeSlider');
+const banner = document.getElementById('banner');
+
+sizeSlider.addEventListener('input', () => {
+  document.documentElement.style.setProperty('--timer-font-size', sizeSlider.value + 'vw');
+});
+
+function updateTimer() {
+  const now = new Date();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+
+  let targetMinute, countingBreak;
+
+  if (minutes < 50) {
+    targetMinute = 50;
+    countingBreak = false;
+  } else {
+    targetMinute = 60;
+    countingBreak = true;
+  }
+
+  let minutesRemaining = targetMinute - minutes - (seconds > 0 ? 1 : 0);
+  let secondsRemaining = (60 - seconds) % 60;
+
+  timerDisplay.textContent = 
+    String(minutesRemaining).padStart(2, '0') + ':' + 
+    String(secondsRemaining).padStart(2, '0');
+
+  if (countingBreak) {
+    document.body.style.backgroundColor = '#007BFF'; // Breaktime blue
+    banner.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+
+    let brightness;
+    if (minutes >= 0 && minutes < 10) brightness = 0;
+    else if (minutes >= 10 && minutes < 20) brightness = 0.2;
+    else if (minutes >= 20 && minutes < 30) brightness = 0.4;
+    else if (minutes >= 30 && minutes < 40) brightness = 0.6;
+    else if (minutes >= 40 && minutes < 50) brightness = 0.8;
+
+    const value = Math.floor(brightness * 255);
+    document.body.style.backgroundColor = `rgb(${value}, ${value}, ${value})`;
+  }
+
+  setTimeout(updateTimer, 1000 - new Date().getMilliseconds());
+}
+
+updateTimer();
+</script>
+
+</body>
+</html>
