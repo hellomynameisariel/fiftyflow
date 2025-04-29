@@ -11,7 +11,7 @@
   #controls { margin-top: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .slider-bar { display: flex; align-items: center; padding: 5px 10px; border-radius: 8px; }
   .slider-bar span { margin: 0 5px; font-size: 1.2em; }
-  .slider-label { margin-top: 10px; font-size: 0.7em; color: inherit; }
+  .slider-label { margin-top: 10px; font-size: 0.7em; color: inherit; font-family: Arial, sans-serif; text-transform: lowercase; }
   input[type=range] { width: 160px; background: transparent; }
   #popOutButton { background: none; border: none; color: inherit; font-size: 1.2em; cursor: pointer; position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; align-items: center; }
   #popOutButton span { font-size: 0.7em; margin-top: 2px; }
@@ -22,7 +22,7 @@
 <button id="popOutButton" title="Open in new window">↗<span>pop-out</span></button>
 <div id="banner">Break time remaining:</div>
 <div id="timer">00:00</div>
-<div class="slider-label">resize</div>
+<div class="slider-label" id="resizeLabel">resize</div>
 <div id="controls">
   <div class="slider-bar" id="sliderBar">
     <span>-</span>
@@ -37,19 +37,19 @@ const sizeSlider = document.getElementById('sizeSlider');
 const banner = document.getElementById('banner');
 const sliderBar = document.getElementById('sliderBar');
 const popOutButton = document.getElementById('popOutButton');
-let popupWindow = null;
+const resizeLabel = document.getElementById('resizeLabel');
 
 sizeSlider.addEventListener('input', () => {
   document.documentElement.style.setProperty('--timer-font-size', sizeSlider.value + 'vw');
 });
 
 popOutButton.addEventListener('click', () => {
-  if (!popupWindow || popupWindow.closed) {
-    popupWindow = window.open(window.location.href, '_blank', 'width=400,height=400,menubar=no,toolbar=no,location=no,status=no');
-  } else {
-    popupWindow.close();
-    popupWindow = null;
-  }
+  const timerWindow = window.open('', '_blank', 'width=400,height=400,menubar=no,toolbar=no,location=no,status=no');
+  const html = document.documentElement.outerHTML;
+  timerWindow.document.open();
+  timerWindow.document.write(html);
+  timerWindow.document.close();
+  window.close();
 });
 
 function updateTimer() {
@@ -83,6 +83,7 @@ function updateTimer() {
     document.body.style.color = '#ffffff';
     banner.style.display = 'block';
     sliderBar.style.backgroundColor = 'rgba(0, 79, 179, 0.5)';
+    resizeLabel.style.color = '#ffffff';
   } else {
     banner.style.display = 'none';
 
@@ -95,7 +96,9 @@ function updateTimer() {
 
     const value = Math.floor(brightness * 255);
     document.body.style.backgroundColor = `rgb(${value}, ${value}, ${value})`;
-    document.body.style.color = (brightness >= 0.5) ? '#000000' : '#ffffff';
+    const textColor = (brightness >= 0.5) ? '#000000' : '#ffffff';
+    document.body.style.color = textColor;
+    resizeLabel.style.color = textColor;
     sliderBar.style.backgroundColor = `rgb(${Math.max(0, value - 20)}, ${Math.max(0, value - 20)}, ${Math.max(0, value - 20)})`;
   }
 
