@@ -5,30 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FiftyFlow Timer</title>
 <style>
-  body { background-color: #000; color: #ccc; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100vh; margin: 0; font-family: Arial, sans-serif; padding-top: 10px; transition: background-color 1s, color 1s; }
-  #banner { font-size: 2em; margin-top: 30px; margin-bottom: 10px; display: none; }
+  body { background-color: #000; color: #ccc; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100vh; margin: 0; font-family: Arial, sans-serif; padding: 10px; transition: background-color 1s, color 1s; position: relative; }
+  #banner { font-size: 2em; margin-top: 40px; margin-bottom: 10px; display: none; }
   #timer { font-size: var(--timer-font-size, 12vw); text-align: center; margin-top: 20px; }
   #controls { margin-top: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .slider-bar { display: flex; align-items: center; padding: 5px 10px; border-radius: 8px; }
   .slider-bar span { margin: 0 5px; font-size: 1.2em; }
-  .slider-label { margin-top: 10px; font-size: 1em; color: #ccc; }
+  .slider-label { margin-top: 10px; font-size: 0.7em; color: inherit; }
   input[type=range] { width: 160px; background: transparent; }
-  #popOutButton { background: none; border: none; color: inherit; font-size: 1.2em; cursor: pointer; margin-top: 5px; display: flex; flex-direction: column; align-items: center; }
+  #popOutButton { background: none; border: none; color: inherit; font-size: 1.2em; cursor: pointer; position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; align-items: center; }
   #popOutButton span { font-size: 0.7em; margin-top: 2px; }
 </style>
 </head>
 <body>
 
+<button id="popOutButton" title="Open in new window">↗<span>pop-out</span></button>
 <div id="banner">Break time remaining:</div>
 <div id="timer">00:00</div>
-<div class="slider-label">Resize</div>
+<div class="slider-label">resize</div>
 <div id="controls">
   <div class="slider-bar" id="sliderBar">
     <span>-</span>
     <input type="range" id="sizeSlider" min="4" max="30" value="12">
     <span>+</span>
   </div>
-  <button id="popOutButton" title="Open in new window">↗<span>pop-out</span></button>
 </div>
 
 <script>
@@ -37,13 +37,20 @@ const sizeSlider = document.getElementById('sizeSlider');
 const banner = document.getElementById('banner');
 const sliderBar = document.getElementById('sliderBar');
 const popOutButton = document.getElementById('popOutButton');
+let isPoppedOut = false;
 
 sizeSlider.addEventListener('input', () => {
   document.documentElement.style.setProperty('--timer-font-size', sizeSlider.value + 'vw');
 });
 
 popOutButton.addEventListener('click', () => {
-  window.open(window.location.href, '_blank', 'width=400,height=400,menubar=no,toolbar=no,location=no,status=no');
+  if (!isPoppedOut) {
+    const popUp = window.open(window.location.href, '_blank', 'width=400,height=400,menubar=no,toolbar=no,location=no,status=no');
+    isPoppedOut = true;
+    popOutButton.innerHTML = "↙<span>pop-in</span>";
+  } else {
+    window.close();
+  }
 });
 
 function updateTimer() {
@@ -70,9 +77,9 @@ function updateTimer() {
 
   if (countingBreak) {
     if (minutesRemaining === 0 || (minutesRemaining === 1 && secondsRemaining > 0)) {
-      document.body.style.backgroundColor = '#CC3333'; // Red alert during last minute of break
+      document.body.style.backgroundColor = '#CC3333';
     } else {
-      document.body.style.backgroundColor = '#007BFF'; // Breaktime blue
+      document.body.style.backgroundColor = '#007BFF';
     }
     document.body.style.color = '#ffffff';
     banner.style.display = 'block';
