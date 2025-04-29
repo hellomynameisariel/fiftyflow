@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FiftyFlow Timer</title>
+<title>🎅🏻 FiftyFlow Timer</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎅🏻</text></svg>">
 <style>
   body { background-color: #000; color: #ccc; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100vh; margin: 0; font-family: Arial, sans-serif; padding: 10px; transition: background-color 1s, color 1s; position: relative; }
   #banner { font-size: 2em; margin-top: 40px; margin-bottom: 10px; display: none; }
@@ -34,7 +35,6 @@
     See All Flow Tools by Ariel
   </a>
 </div>
-
 </div>
 
 <script>
@@ -76,9 +76,12 @@ function updateTimer() {
   let minutesRemaining = targetMinute - minutes - (seconds > 0 ? 1 : 0);
   let secondsRemaining = (60 - seconds) % 60;
 
-  timerDisplay.textContent = 
+  const timeText = 
     String(minutesRemaining).padStart(2, '0') + ':' + 
     String(secondsRemaining).padStart(2, '0');
+
+  timerDisplay.textContent = timeText;
+  document.title = `🎅🏻 ${timeText} FiftyFlow Timer`;
 
   if (countingBreak) {
     if (minutesRemaining === 0 || (minutesRemaining === 1 && secondsRemaining > 0)) {
